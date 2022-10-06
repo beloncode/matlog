@@ -18,8 +18,8 @@ public class CatlogDBHelper extends SQLiteOpenHelper {
     private static final String TABLE_NAME = "Filters";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_TEXT = "filterText";
-    private static UtilLogger log = new UtilLogger(CatlogDBHelper.class);
-    private SQLiteDatabase db;
+    private static final UtilLogger log = new UtilLogger(CatlogDBHelper.class);
+    private final SQLiteDatabase db;
 
     public CatlogDBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
