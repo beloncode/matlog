@@ -104,7 +104,7 @@
     <item
         android:id="@+id/stop_and_exit"
         android:title="@string/exit"
-        android:icon="@drawable/ic_stop_and_exit" />
+        android:icon="@drawable/ic_stop_and_exit_24dp" />
 
     <item
         android:id="@+id/menu_crazy_logger_service"
