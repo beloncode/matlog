@@ -239,22 +239,19 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
     private void handleShortcuts(String action) {
         if (action == null) return;
 
-        switch (action) {
-            case "record":
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            SHOW_RECORD_LOG_REQUEST_SHORTCUT);
-                    return;
-                }
+        if ("record".equals(action)) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        SHOW_RECORD_LOG_REQUEST_SHORTCUT);
+                return;
+            }
 
-                String logFilename = DialogHelper.createLogFilename();
-                String defaultLogLevel = Character.toString(PreferenceHelper.getDefaultLogLevelPreference(this));
+            String logFilename = DialogHelper.createLogFilename();
+            String defaultLogLevel = Character.toString(PreferenceHelper.getDefaultLogLevelPreference(this));
 
-                DialogHelper.startRecordingWithProgressDialog(logFilename, "", defaultLogLevel, this::finish, this);
-
-                break;
+            DialogHelper.startRecordingWithProgressDialog(logFilename, "", defaultLogLevel, this::finish, this);
         }
     }
 

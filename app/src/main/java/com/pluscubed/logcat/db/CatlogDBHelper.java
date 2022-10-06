@@ -50,17 +50,11 @@ public class CatlogDBHelper extends SQLiteOpenHelper {
 
             List<FilterItem> filters = new ArrayList<>();
 
-            Cursor cursor = null;
-            try {
-                cursor = db.query(TABLE_NAME, new String[]{COLUMN_ID, COLUMN_TEXT}, null, null, null, null, null);
-
+            try (Cursor cursor = db.query(TABLE_NAME, new String[]{COLUMN_ID, COLUMN_TEXT},
+                    null, null, null, null, null)) {
                 while (cursor.moveToNext()) {
                     FilterItem filterItem = FilterItem.create(cursor.getInt(0), cursor.getString(1));
                     filters.add(filterItem);
-                }
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
                 }
             }
 
@@ -92,17 +86,12 @@ public class CatlogDBHelper extends SQLiteOpenHelper {
                 return null;
             }
 
-            Cursor cursor = null;
-            try {
-                String selection = COLUMN_TEXT + "=?";
-                String[] selectionArgs = {text};
-                cursor = db.query(TABLE_NAME, new String[]{COLUMN_ID, COLUMN_TEXT}, selection, selectionArgs, null, null, null);
+            String selection = COLUMN_TEXT + "=?";
+            String[] selectionArgs = {text};
+
+            try (Cursor cursor = db.query(TABLE_NAME, new String[]{COLUMN_ID, COLUMN_TEXT}, selection, selectionArgs, null, null, null)) {
                 cursor.moveToNext();
                 return FilterItem.create(cursor.getInt(0), cursor.getString(1));
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
             }
         }
     }
