@@ -600,6 +600,10 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.stop_and_exit:
+                finish();
+                /* This return will never be executed, but will suppress some warnings messages */
+                return true;
             case R.id.menu_play_pause:
                 pauseOrUnpause(item);
                 return true;
