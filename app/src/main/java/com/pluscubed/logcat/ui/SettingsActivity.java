@@ -111,8 +111,8 @@ public class SettingsActivity extends BaseActivity {
         }
 
         private void setUpPreferences() {
-            setCurrentValue("ui.theme");
-            setCurrentValue("theme");
+            setCurrentValue("ui.theme", null, null);
+            setCurrentValue("theme", null, null);
 
             displayLimitPreference = (EditTextPreference) findPreference(getString(R.string.pref_display_limit));
 
@@ -144,6 +144,9 @@ public class SettingsActivity extends BaseActivity {
             setDefaultLevelPreferenceSummary(defaultLevelPreference.getEntry());
 
             mThemePreference = findPreference("ui.theme");
+            mThemePreference.setOnPreferenceChangeListener(this);
+
+            mThemePreference = findPreference("theme");
             mThemePreference.setOnPreferenceChangeListener(this);
 
             bufferPreference = (MultipleChoicePreference) findPreference(getString(R.string.pref_buffer));
@@ -212,7 +215,7 @@ public class SettingsActivity extends BaseActivity {
                 return false;
 
             } else if (preference.getKey().equals(getString(R.string.pref_theme))) {
-                setCurrentValue(preference.getKey());
+                setCurrentValue(preference.getKey(), (ListPreference)preference, newValue.toString());
                 return true;
             } else if (preference.getKey().equals(getString(R.string.pref_buffer))) {
                 // buffers pref
@@ -251,16 +254,13 @@ public class SettingsActivity extends BaseActivity {
                 Toast.makeText(getActivity(), R.string.toast_pref_changed_restart_required, Toast.LENGTH_LONG).show();
 
             } else if (preference.getKey().equals("ui.theme")){
-                setCurrentValue(preference.getKey());
+                setCurrentValue(preference.getKey(), (ListPreference)preference, newValue.toString());
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent("org.openintents.action.REFRESH_THEME"));
                 return true;
             } else {
                 // text size pref
                 // update the summary to reflect changes
-                ListPreference listPreference = (ListPreference) preference;
-                int index = ArrayUtil.indexOf(listPreference.getEntryValues(), newValue);
-                CharSequence newEntry = listPreference.getEntries()[index];
-                listPreference.setSummary(newEntry);
+                setCurrentValue(preference.getKey(), (ListPreference)preference, newValue.toString());
 
                 return true;
             }
@@ -288,9 +288,16 @@ public class SettingsActivity extends BaseActivity {
             bufferPreference.setSummary(summary);
         }
 
-        private void setCurrentValue(String key){
-            ListPreference preference = (ListPreference) findPreference(key);
-            preference.setSummary(preference.getEntry());
+        private void setCurrentValue(String key, ListPreference preference, String newValue){
+            if (newValue != null && preference != null) {
+                int index = ArrayUtil.indexOf(preference.getEntryValues(), newValue);
+                CharSequence newEntry = preference.getEntries()[index];
+                preference.setSummary(newEntry);
+                return;
+            }
+            ListPreference preferenceFound = (ListPreference) findPreference(key);
+            preferenceFound.setSummary(preferenceFound.getEntry());
+
         }
     }
 }
