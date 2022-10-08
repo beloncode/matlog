@@ -14,7 +14,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Combines multipe buffered readers into a single reader that merges all input synchronously.
+ * Combines multiple buffered readers into a single reader that merges all input synchronously.
  *
  * @author nolan
  */
