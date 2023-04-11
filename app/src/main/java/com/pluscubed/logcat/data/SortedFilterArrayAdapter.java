@@ -39,7 +39,7 @@ import java.util.List;
  * implementation, in order to make it sorted.
  * <p/>
  * A ListAdapter that manages a ListView backed by an array of arbitrary
- * objects.  By default this class expects that the provided resource id referecnes
+ * objects.  By default this class expects that the provided resource id references
  * a single TextView.  If you want to use a more complex layout, use the constructors that
  * also takes a field id.  That field id should reference a TextView in the larger layout
  * resource.
@@ -54,7 +54,7 @@ import java.util.List;
  */
 public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterable {
 
-    private static UtilLogger log = new UtilLogger(SortedFilterArrayAdapter.class);
+    private static final UtilLogger log = new UtilLogger(SortedFilterArrayAdapter.class);
     /**
      * Lock used to modify the content of {@link #mObjects}. Any write operation
      * performed on the array should be synchronized on this lock. This lock is also
@@ -62,7 +62,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      * the original array of data.
      */
     private final Object mLock = new Object();
-    private Comparator<T> stringComparator = (object1, object2) -> object1.toString().compareToIgnoreCase(object2.toString());
+    private final Comparator<T> stringComparator = (object1, object2) -> object1.toString().compareToIgnoreCase(object2.toString());
     /**
      * Contains the list of objects that represent the data of this ArrayAdapter.
      * The content of this list is referred to as "the array" in the documentation.
@@ -81,7 +81,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
     private int mDropDownResource;
 
     /**
-     * If the inflated resource is not a TextView, {@link #mFieldId} is used to find
+     * If the inflated resource is not a TextView, {#mFieldId} is used to find
      * a TextView inside the inflated views hierarchy. This field must contain the
      * identifier that matches the one defined in the resource file.
      */
@@ -107,6 +107,8 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      * @param textViewResourceId The resource ID for a layout file containing a TextView to use when
      *                           instantiating views.
      */
+
+    @SuppressWarnings("unused")
     public SortedFilterArrayAdapter(Context context, int textViewResourceId) {
         init(context, textViewResourceId, 0, new ArrayList<>());
     }
@@ -119,6 +121,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      *                           instantiating views.
      * @param textViewResourceId The id of the TextView within the layout resource to be populated
      */
+    @SuppressWarnings("unused")
     public SortedFilterArrayAdapter(Context context, int resource, int textViewResourceId) {
         init(context, resource, textViewResourceId, new ArrayList<>());
     }
@@ -131,6 +134,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      *                           instantiating views.
      * @param objects            The objects to represent in the ListView.
      */
+    @SuppressWarnings("unused")
     public SortedFilterArrayAdapter(Context context, int textViewResourceId, T[] objects) {
         init(context, textViewResourceId, 0, Arrays.asList(objects));
     }
@@ -144,6 +148,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      * @param textViewResourceId The id of the TextView within the layout resource to be populated
      * @param objects            The objects to represent in the ListView.
      */
+    @SuppressWarnings("unused")
     public SortedFilterArrayAdapter(Context context, int resource, int textViewResourceId, T[] objects) {
         init(context, resource, textViewResourceId, Arrays.asList(objects));
     }
@@ -169,6 +174,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      * @param textViewResourceId The id of the TextView within the layout resource to be populated
      * @param objects            The objects to represent in the ListView.
      */
+    @SuppressWarnings("unused")
     public SortedFilterArrayAdapter(Context context, int resource, int textViewResourceId, List<T> objects) {
         init(context, resource, textViewResourceId, objects);
     }
@@ -182,6 +188,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      * @param textViewResId  The identifier of the layout used to create views.
      * @return An ArrayAdapter<CharSequence>.
      */
+    @SuppressWarnings("unused")
     public static ArrayAdapter<CharSequence> createFromResource(Context context,
                                                                 int textArrayResId, int textViewResId) {
         CharSequence[] strings = context.getResources().getTextArray(textArrayResId);
@@ -206,11 +213,12 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
     }
 
     /**
-     * Inserts the spcified object at the specified index in the array.
+     * Inserts the specified object at the specified index in the array.
      *
      * @param object The object to insert into the array.
      * @param index  The index at which the object must be inserted.
      */
+    @SuppressWarnings("unused")
     public void insert(T object, int index) {
         if (mOriginalValues != null) {
             synchronized (mLock) {
@@ -228,6 +236,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      *
      * @param object The object to remove.
      */
+    @SuppressWarnings("unused")
     public void remove(T object) {
         if (mOriginalValues != null) {
             synchronized (mLock) {
@@ -242,6 +251,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
     /**
      * Remove all elements from the list.
      */
+    @SuppressWarnings("unused")
     public void clear() {
         if (mOriginalValues != null) {
             synchronized (mLock) {
@@ -276,6 +286,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      *                       automatically call {@link
      *                       #notifyDataSetChanged}
      */
+    @SuppressWarnings("unused")
     public void setNotifyOnChange(boolean notifyOnChange) {
         mNotifyOnChange = notifyOnChange;
     }
@@ -318,6 +329,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      * @param item The item to retrieve the position of.
      * @return The position of the specified item.
      */
+    @SuppressWarnings("unused")
     public int getPosition(T item) {
         return mObjects.indexOf(item);
     }
@@ -372,6 +384,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
      * @param resource the layout resource defining the drop down views
      * @see #getDropDownView(int, android.view.View, android.view.ViewGroup)
      */
+    @SuppressWarnings("unused")
     public void setDropDownViewResource(int resource) {
         this.mDropDownResource = resource;
     }
@@ -429,7 +442,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
                     final T value = values.get(i);
                     final String valueText = value.toString().toLowerCase();
 
-                    // Only match against the whole, non-splitted value
+                    // Only match against the whole, has non-split value
                     if (valueText.startsWith(prefixString)) {
                         newValues.add(value);
                     }

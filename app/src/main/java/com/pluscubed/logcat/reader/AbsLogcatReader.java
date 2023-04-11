@@ -9,6 +9,7 @@ public abstract class AbsLogcatReader implements LogcatReader {
         this.recordingMode = recordingMode;
     }
 
+    @SuppressWarnings("unused")
     public boolean isRecordingMode() {
         return recordingMode;
     }

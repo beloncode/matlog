@@ -55,7 +55,6 @@ public class RecordLogDialogActivity extends BaseActivity {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            //noinspection ConstantConditions
             final List<String> suggestions = Arrays.asList(getArguments().getStringArray(QUERY_SUGGESTIONS));
 
             String logFilename = DialogHelper.createLogFilename();
@@ -98,7 +97,6 @@ public class RecordLogDialogActivity extends BaseActivity {
                                 break;
                         }
                     }).build();
-            //noinspection ConstantConditions
             DialogHelper.initFilenameInputDialog(dialog);
 
             return dialog;

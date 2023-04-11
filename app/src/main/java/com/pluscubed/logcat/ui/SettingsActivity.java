@@ -91,11 +91,8 @@ public class SettingsActivity extends BaseActivity {
         private static final int MIN_DISPLAY_LIMIT = 1000;
 
         private EditTextPreference logLinePeriodPreference, displayLimitPreference, filterPatternPreference;
-        private ListPreference textSizePreference, defaultLevelPreference;
+        private ListPreference defaultLevelPreference;
         private MultipleChoicePreference bufferPreference;
-        private Preference mThemePreference;
-        private Preference mAboutPreference;
-        private SwitchPreference scrubberPreference;
 
         private boolean bufferChanged = false;
 
@@ -135,7 +132,7 @@ public class SettingsActivity extends BaseActivity {
 
             logLinePeriodPreference.setOnPreferenceChangeListener(this);
 
-            textSizePreference = (ListPreference) findPreference(getString(R.string.pref_text_size));
+            ListPreference textSizePreference = (ListPreference) findPreference(getString(R.string.pref_text_size));
             textSizePreference.setSummary(textSizePreference.getEntry());
             textSizePreference.setOnPreferenceChangeListener(this);
 
@@ -143,7 +140,7 @@ public class SettingsActivity extends BaseActivity {
             defaultLevelPreference.setOnPreferenceChangeListener(this);
             setDefaultLevelPreferenceSummary(defaultLevelPreference.getEntry());
 
-            mThemePreference = findPreference("ui.theme");
+            Preference mThemePreference = findPreference("ui.theme");
             mThemePreference.setOnPreferenceChangeListener(this);
 
             mThemePreference = findPreference("theme");
@@ -155,7 +152,7 @@ public class SettingsActivity extends BaseActivity {
 
             mThemePreference.setOnPreferenceChangeListener(this);
 
-            mAboutPreference = findPreference(getString(R.string.pref_about));
+            Preference mAboutPreference = findPreference(getString(R.string.pref_about));
             mAboutPreference.setOnPreferenceClickListener(preference -> {
                 // launch about activity
                 Intent intent = new Intent(getActivity(), AboutDialogActivity.class);
@@ -164,7 +161,7 @@ public class SettingsActivity extends BaseActivity {
             });
             mAboutPreference.setSummary(getString(R.string.version, PackageHelper.getVersionName(getActivity())));
 
-            scrubberPreference = (SwitchPreference) getPreferenceScreen().findPreference("scrubber");
+            SwitchPreference scrubberPreference = (SwitchPreference) getPreferenceScreen().findPreference("scrubber");
             scrubberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 LogLine.isScrubberEnabled = (boolean) newValue;
                 return true;

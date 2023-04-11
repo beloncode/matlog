@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.pluscubed.logcat.util.StringUtil;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public class SearchCriteria {
 
     private int pid = -1;
     private String tag;
-    private String searchText;
+    private final String searchText;
     private int searchTextAsInt = -1;
 
     public SearchCriteria(CharSequence inputQuery) {
@@ -28,7 +29,7 @@ public class SearchCriteria {
         Matcher pidMatcher = PID_PATTERN.matcher(query);
         if (pidMatcher.find()) {
             try {
-                pid = Integer.parseInt(pidMatcher.group(1));
+                pid = Integer.parseInt(Objects.requireNonNull(pidMatcher.group(1)));
                 query.replace(pidMatcher.start(), pidMatcher.end(), ""); // remove
                 // from
                 // search
@@ -42,7 +43,7 @@ public class SearchCriteria {
         Matcher tagMatcher = TAG_PATTERN.matcher(query);
         if (tagMatcher.find()) {
             tag = tagMatcher.group(1);
-            if (tag.startsWith("\"") && tag.endsWith("\"")) {
+            if (Objects.requireNonNull(tag).startsWith("\"") && tag.endsWith("\"")) {
                 tag = tag.substring(1, tag.length() - 1); // remove quotes
             }
             query.replace(tagMatcher.start(), tagMatcher.end(), ""); // remove

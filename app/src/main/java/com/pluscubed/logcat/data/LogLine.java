@@ -7,6 +7,7 @@ import com.pluscubed.logcat.reader.ScrubberUtils;
 import com.pluscubed.logcat.util.LogLineAdapterUtil;
 import com.pluscubed.logcat.util.UtilLogger;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,7 @@ public class LogLine {
 
     private static final int TIMESTAMP_LENGTH = 19;
 
-    private static Pattern logPattern = Pattern.compile(
+    private static final Pattern logPattern = Pattern.compile(
             // log level
             "(\\w)" +
                     "/" +
@@ -28,7 +29,7 @@ public class LogLine {
                     "(?:\\*\\s*\\d+)?" +
                     "\\): ");
 
-    private static UtilLogger log = new UtilLogger(LogLine.class);
+    private static final UtilLogger log = new UtilLogger(LogLine.class);
 
     private int logLevel;
     private String tag;
@@ -60,7 +61,7 @@ public class LogLine {
         Matcher matcher = logPattern.matcher(originalLine);
 
         if (matcher.find(startIdx)) {
-            char logLevelChar = matcher.group(1).charAt(0);
+            char logLevelChar = Objects.requireNonNull(matcher.group(1)).charAt(0);
 
             String logText = originalLine.substring(matcher.end());
             if (logText.matches("^maxLineHeight.*|Failed to read.*")) {
@@ -70,12 +71,13 @@ public class LogLine {
             }
 
             String tagText = matcher.group(2);
+            assert tagText != null;
             if (tagText.matches(filterPattern)) {
                 logLine.setLogLevel(convertCharToLogLevel('V'));
             }
 
             logLine.setTag(tagText);
-            logLine.setProcessId(Integer.parseInt(matcher.group(3)));
+            logLine.setProcessId(Integer.parseInt(Objects.requireNonNull(matcher.group(3))));
 
             logLine.setLogOutput(logText);
 

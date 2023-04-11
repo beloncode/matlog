@@ -35,7 +35,7 @@ public class SuperUserHelper {
 
     private static final Pattern PID_PATTERN = Pattern.compile("\\d+");
     private static final Pattern SPACES_PATTERN = Pattern.compile("\\s+");
-    private static UtilLogger log = new UtilLogger(SuperUserHelper.class);
+    private static final UtilLogger log = new UtilLogger(SuperUserHelper.class);
     private static boolean failedToObtainRoot = false;
 
     private static void showWarningDialog(final Context context) {
@@ -63,10 +63,10 @@ public class SuperUserHelper {
         return context.getPackageManager().checkPermission("android.permission.READ_LOGS", context.getPackageName()) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private static List<Integer> getAllRelatedPids(final int pid) {
+    private static List<Integer> getAllRelatedPIDs(final int pid) {
         List<Integer> result = new ArrayList<>();
         result.add(pid);
-        // use 'ps' to get this pid and all pids that are related to it (e.g. spawned by it)
+        // use 'ps' to get this pid and all PIDs that are related to it (e.g. spawned by it)
         try {
 
             final Process suProcess = Runtime.getRuntime().exec("su");
@@ -78,18 +78,19 @@ public class SuperUserHelper {
                     outputStream.flush();
                 }
 
-            }).run();
+            }).start();
 
             if (suProcess != null) {
                 try {
                     suProcess.waitFor();
                 } catch (InterruptedException e) {
-                    log.e(e, "cannot get pids");
+                    log.e(e, "cannot get PIDs");
                 }
             }
 
 
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(suProcess.getInputStream()), 8192);) {
+            assert suProcess != null;
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(suProcess.getInputStream()), 8192)) {
                 while (bufferedReader.ready()) {
                     String[] line = SPACES_PATTERN.split(bufferedReader.readLine());
                     if (line.length >= 3) {
@@ -112,11 +113,12 @@ public class SuperUserHelper {
     public static void destroy(Process process) {
         // stupid method for getting the pid, but it actually works
         Matcher matcher = PID_PATTERN.matcher(process.toString());
+        //noinspection ResultOfMethodCallIgnored
         matcher.find();
         int pid = Integer.parseInt(matcher.group());
-        List<Integer> allRelatedPids = getAllRelatedPids(pid);
-        log.d("Killing %s", allRelatedPids);
-        for (Integer relatedPid : allRelatedPids) {
+        List<Integer> allRelatedPIDs = getAllRelatedPIDs(pid);
+        log.d("Killing %s", allRelatedPIDs);
+        for (Integer relatedPid : allRelatedPIDs) {
             destroyPid(relatedPid);
         }
 
@@ -159,7 +161,7 @@ public class SuperUserHelper {
         Runnable toastRunnable = () -> Toast.makeText(context, R.string.toast_request_root, Toast.LENGTH_LONG).show();
         handler.postDelayed(toastRunnable, 200);
 
-        Process process = null;
+        Process process;
         try {
             // Preform su to get root privileges
             process = Runtime.getRuntime().exec("su");
@@ -189,6 +191,7 @@ public class SuperUserHelper {
         handler.removeCallbacks(toastRunnable);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isFailedToObtainRoot() {
         return failedToObtainRoot;
     }

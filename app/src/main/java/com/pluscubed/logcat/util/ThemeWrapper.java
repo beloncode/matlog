@@ -46,6 +46,7 @@ public abstract class ThemeWrapper {
         return Integer.parseInt(App.get().getPreferences().getString("ui.theme", String.valueOf(Theme.LIGHT.ordinal())));
     }
 
+    @SuppressWarnings("unused")
     public static boolean isLightTheme() {
         return getThemeIndex() == Theme.LIGHT.ordinal();
     }

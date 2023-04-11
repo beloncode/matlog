@@ -54,10 +54,12 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         getDelegate().onPostCreate(savedInstanceState);
     }
 
+    @SuppressWarnings("unused")
     public ActionBar getSupportActionBar() {
         return getDelegate().getSupportActionBar();
     }
 
+    @SuppressWarnings("unused")
     public void setSupportActionBar(@Nullable Toolbar toolbar) {
         getDelegate().setSupportActionBar(toolbar);
     }

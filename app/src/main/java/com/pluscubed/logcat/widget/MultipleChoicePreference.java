@@ -22,10 +22,12 @@ public class MultipleChoicePreference extends ListPreference {
     public static final String DELIMITER = ",";
     boolean[] checkedDialogEntryIndexes;
 
+    @SuppressWarnings("unused")
     public MultipleChoicePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    @SuppressWarnings("unused")
     public MultipleChoicePreference(Context context) {
         super(context);
     }

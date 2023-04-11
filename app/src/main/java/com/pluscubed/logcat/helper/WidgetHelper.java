@@ -1,5 +1,6 @@
 package com.pluscubed.logcat.helper;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -16,7 +17,7 @@ import com.pluscubed.logcat.util.UtilLogger;
 
 public class WidgetHelper {
 
-    private static UtilLogger log = new UtilLogger(WidgetHelper.class);
+    private static final UtilLogger log = new UtilLogger(WidgetHelper.class);
 
     public static void updateWidgets(Context context) {
 
@@ -86,6 +87,7 @@ public class WidgetHelper {
 
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private static PendingIntent getPendingIntent(Context context, int appWidgetId) {
 
         Intent intent = new Intent(context, RecordingWidgetProvider.class);

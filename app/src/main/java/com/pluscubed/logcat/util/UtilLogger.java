@@ -15,7 +15,7 @@ public class UtilLogger {
 
 	public static final boolean DEBUG_MODE = BuildConfig.DEBUG;
 
-	private String tag;
+	private final String tag;
 
 	public UtilLogger(String tag) {
 		this.tag = tag;
@@ -37,6 +37,7 @@ public class UtilLogger {
 		Log.w(tag, String.format(format, more), e);
 	}
 
+	@SuppressWarnings("unused")
 	public void w(String format, Object... more) {
 		Log.w(tag, String.format(format, more));
 	}

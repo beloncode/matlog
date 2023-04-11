@@ -19,11 +19,11 @@ import java.util.Date;
 import java.util.List;
 
 public class LogFileAdapter extends ArrayAdapter<CharSequence> {
-    private List<CharSequence> objects;
-    private int checked;
-    private boolean multiMode;
+    private final List<CharSequence> objects;
+    private final int checked;
+    private final boolean multiMode;
     private boolean[] checkedItems;
-    private int resId;
+    private final int resId;
 
     public LogFileAdapter(Context context, List<CharSequence> objects, int checked, boolean multiMode) {
 

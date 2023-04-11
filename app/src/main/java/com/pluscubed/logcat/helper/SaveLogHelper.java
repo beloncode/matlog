@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -44,9 +45,9 @@ public class SaveLogHelper {
     private static final String SAVED_LOGS_DIR = "saved_logs";
     private static final String TMP_DIR = "tmp";
 
-    private static UtilLogger log = new UtilLogger(SaveLogHelper.class);
+    private static final UtilLogger log = new UtilLogger(SaveLogHelper.class);
 
-    public static File saveTemporaryFile(Context context, String filename, CharSequence text, List<CharSequence> lines) {
+    public static File saveTemporaryFile(String filename, CharSequence text, List<CharSequence> lines) {
         PrintStream out = null;
         try {
 
@@ -76,7 +77,8 @@ public class SaveLogHelper {
         }
     }
 
-    public static boolean checkSdCard(Context context) {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean checkSdCard(final Context context) {
 
         boolean result = SaveLogHelper.checkIfSdCardExists();
 
@@ -108,6 +110,7 @@ public class SaveLogHelper {
         File file = new File(catlogDir, filename);
 
         if (file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
 
@@ -131,7 +134,6 @@ public class SaveLogHelper {
     /**
      * Get all the log filenames, order by last modified descending
      *
-     * @return
      */
     public static List<String> getLogFilenames() {
 
@@ -145,7 +147,7 @@ public class SaveLogHelper {
 
         List<File> files = new ArrayList<>(Arrays.asList(filesArray));
 
-        Collections.sort(files, (object1, object2) -> Long.compare(object2.lastModified(), object1.lastModified()));
+        files.sort((object1, object2) -> Long.compare(object2.lastModified(), object1.lastModified()));
 
         List<String> result = new ArrayList<>();
 
@@ -169,6 +171,7 @@ public class SaveLogHelper {
 
         try {
 
+            //noinspection IOStreamConstructor
             bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(logFile)), BUFFER);
 
             while (bufferedReader.ready()) {
@@ -208,19 +211,15 @@ public class SaveLogHelper {
 
         File newFile = new File(catlogDir, filename);
         try {
-            if (!newFile.exists()) {
-                newFile.createNewFile();
-            }
+            assert newFile.exists() || newFile.createNewFile();
         } catch (IOException ex) {
             log.e(ex, "couldn't create new file");
             return false;
         }
-        PrintStream out = null;
-        try {
+        try (PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream(newFile, true), BUFFER))) {
             // specifying BUFFER gets rid of an annoying warning message
-            out = new PrintStream(new BufferedOutputStream(new FileOutputStream(newFile, true), BUFFER));
 
-            // save a log as either a list of strings or as a charsequence
+            // save a log as either a list of strings or as a char-sequence
             if (logLines != null) {
                 for (CharSequence line : logLines) {
                     out.println(line);
@@ -233,10 +232,6 @@ public class SaveLogHelper {
         } catch (FileNotFoundException ex) {
             log.e(ex, "unexpected exception");
             return false;
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
 
         return true;
@@ -250,6 +245,7 @@ public class SaveLogHelper {
         File tmpDir = new File(catlogDir, TMP_DIR);
 
         if (!tmpDir.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             tmpDir.mkdir();
         }
 
@@ -262,6 +258,7 @@ public class SaveLogHelper {
         File savedLogsDir = new File(catlogDir, SAVED_LOGS_DIR);
 
         if (!savedLogsDir.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             savedLogsDir.mkdir();
         }
 
@@ -275,6 +272,7 @@ public class SaveLogHelper {
         File catlogDir = new File(sdcardDir, CATLOG_DIR);
 
         if (!catlogDir.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             catlogDir.mkdir();
         }
         return catlogDir;
@@ -291,9 +289,11 @@ public class SaveLogHelper {
 
         if (legacyDir.exists() && legacyDir.isDirectory()) {
             File savedLogsDir = getSavedLogsDirectory();
-            for (File file : legacyDir.listFiles()) {
+            for (File file : Objects.requireNonNull(legacyDir.listFiles())) {
+                //noinspection ResultOfMethodCallIgnored
                 file.renameTo(new File(savedLogsDir, file.getName()));
             }
+            //noinspection ResultOfMethodCallIgnored
             legacyDir.delete();
         }
     }
@@ -326,29 +326,18 @@ public class SaveLogHelper {
     private static File saveZipFileAndThrow(File dir, String filename, List<File> files) throws IOException {
         File zipFile = new File(dir, filename);
 
-        ZipOutputStream output = null;
-        try {
-            output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile), BUFFER));
+        //noinspection IOStreamConstructor
+        try (ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile), BUFFER))) {
 
             for (File file : files) {
                 FileInputStream fi = new FileInputStream(file);
-                BufferedInputStream input = null;
-                try {
-                    input = new BufferedInputStream(fi, BUFFER);
+                try (BufferedInputStream input = new BufferedInputStream(fi, BUFFER)) {
 
                     ZipEntry entry = new ZipEntry(file.getName());
                     output.putNextEntry(entry);
                     copy(input, output);
-                } finally {
-                    if (input != null) {
-                        input.close();
-                    }
                 }
 
-            }
-        } finally {
-            if (output != null) {
-                output.close();
             }
         }
         return zipFile;
@@ -362,12 +351,11 @@ public class SaveLogHelper {
      *
      * @param from the input stream to read from
      * @param to   the output stream to write to
-     * @return the number of bytes copied
      * @throws IOException if an I/O error occurs
      */
-    private static long copy(InputStream from, OutputStream to) throws IOException {
+    private static void copy(InputStream from, OutputStream to) throws IOException {
         byte[] buf = new byte[BUFFER];
-        long total = 0;
+        @SuppressWarnings("unused") long total = 0;
         while (true) {
             int r = from.read(buf);
             if (r == -1) {
@@ -376,7 +364,6 @@ public class SaveLogHelper {
             to.write(buf, 0, r);
             total += r;
         }
-        return total;
     }
 
     public static String createLogFilename(boolean withDate) {
@@ -402,7 +389,8 @@ public class SaveLogHelper {
     }
 
     public static void cleanTemp() {
-        for (File file : getTempDirectory().listFiles()) {
+        for (File file : Objects.requireNonNull(getTempDirectory().listFiles())) {
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
     }

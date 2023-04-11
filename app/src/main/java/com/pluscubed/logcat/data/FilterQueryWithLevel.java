@@ -2,8 +2,8 @@ package com.pluscubed.logcat.data;
 
 public class FilterQueryWithLevel {
 
-    private String filterQuery;
-    private String logLevel;
+    private final String filterQuery;
+    private final String logLevel;
 
     public FilterQueryWithLevel(String filterQuery, String logLevel) {
         this.filterQuery = filterQuery;

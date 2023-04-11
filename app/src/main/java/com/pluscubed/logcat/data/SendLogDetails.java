@@ -46,7 +46,7 @@ public class SendLogDetails {
         Zip("application/zip"),
         Text("application/*");
 
-        private String mimeType;
+        private final String mimeType;
 
         AttachmentType(String mimeType) {
             this.mimeType = mimeType;

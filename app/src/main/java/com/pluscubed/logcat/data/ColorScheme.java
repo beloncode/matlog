@@ -34,15 +34,15 @@ public enum ColorScheme {
             R.color.main_foreground_tmobile, R.array.light_theme_colors, R.color.spinner_droptown_tmobile,
             R.color.main_bubble_background_tmobile, true, R.color.main_bubble_background_light_2),;
 
-    private static Map<String, ColorScheme> preferenceNameToColorScheme = new HashMap<>();
-    private int nameResource;
-    private int backgroundColorResource;
-    private int foregroundColorResource;
-    private int spinnerColorResource;
-    private int bubbleBackgroundColorResource;
-    private int tagColorsResource;
-    private boolean useLightProgressBar;
-    private int selectedColorResource;
+    private static final Map<String, ColorScheme> preferenceNameToColorScheme = new HashMap<>();
+    private final int nameResource;
+    private final int backgroundColorResource;
+    private final int foregroundColorResource;
+    private final int spinnerColorResource;
+    private final int bubbleBackgroundColorResource;
+    private final int tagColorsResource;
+    private final boolean useLightProgressBar;
+    private final int selectedColorResource;
     private int backgroundColor = -1;
     private int foregroundColor = -1;
     private int spinnerColor = -1;
@@ -73,6 +73,7 @@ public enum ColorScheme {
         return preferenceNameToColorScheme.get(name);
     }
 
+    @SuppressWarnings("unused")
     public String getDisplayableName(Context context) {
 
         CharSequence[] themeChoiceValues = context.getResources().getStringArray(R.array.pref_theme_choices_values);
@@ -120,6 +121,7 @@ public enum ColorScheme {
         return spinnerColor;
     }
 
+    @SuppressWarnings("unused")
     public int getBubbleBackgroundColor(Context context) {
         if (bubbleBackgroundColor == -1) {
             bubbleBackgroundColor = ContextCompat.getColor(context,bubbleBackgroundColorResource);
@@ -127,6 +129,7 @@ public enum ColorScheme {
         return bubbleBackgroundColor;
     }
 
+    @SuppressWarnings("unused")
     public boolean isUseLightProgressBar() {
         return useLightProgressBar;
     }

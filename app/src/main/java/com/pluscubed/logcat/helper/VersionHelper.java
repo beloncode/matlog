@@ -12,7 +12,9 @@ import java.lang.reflect.Field;
 public class VersionHelper {
 
     public static final int VERSION_CUPCAKE = 3;
+    @SuppressWarnings("unused")
     public static final int VERSION_DONUT = 4;
+    @SuppressWarnings("unused")
     public static final int VERSION_FROYO = 8;
     public static final int VERSION_JELLYBEAN = 16;
 
@@ -23,6 +25,7 @@ public class VersionHelper {
         try {
             Field field = getSdkIntField();
             if (field != null) {
+                //noinspection ConstantConditions
                 return (Integer) field.get(null);
             }
         } catch (IllegalAccessException ignore) {

@@ -1,5 +1,6 @@
 package com.pluscubed.logcat;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -45,11 +46,11 @@ public class LogcatRecordingService extends IntentService {
     public static final String EXTRA_QUERY_FILTER = "filter";
     public static final String EXTRA_LEVEL = "level";
     private static final String ACTION_STOP_RECORDING = "com.pluscubed.catlog.action.STOP_RECORDING";
-    private static UtilLogger log = new UtilLogger(LogcatRecordingService.class);
+    private static final UtilLogger log = new UtilLogger(LogcatRecordingService.class);
     private final Object lock = new Object();
     private LogcatReader mReader;
     private boolean mKilled;
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             log.d("onReceive()");
@@ -138,7 +139,7 @@ public class LogcatRecordingService extends IntentService {
         stopRecordingIntent.setData(Uri.withAppendedPath(Uri.parse(URI_SCHEME + "://stop/"),
                 Long.toHexString(new Random().nextLong())));
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+        @SuppressLint({"UnspecifiedImmutableFlag", "LaunchActivityFromNotification"}) PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
                 0 /* no requestCode */, stopRecordingIntent, PendingIntent.FLAG_ONE_SHOT);
 
         final String CHANNEL_ID = "matlog_logging_channel";
@@ -251,6 +252,7 @@ public class LogcatRecordingService extends IntentService {
     }
 
 
+    @SuppressLint("ShowToast")
     private void makeToast(final int stringResId, final int toastLength) {
         handler.post(Toast.makeText(LogcatRecordingService.this, stringResId, toastLength)::show);
 

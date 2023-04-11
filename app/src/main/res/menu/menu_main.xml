@@ -7,7 +7,7 @@
         android:icon="@drawable/ic_search"
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always|collapseActionView" />
+        app:showAsAction="ifRoom|collapseActionView" />
 
     <item
         android:id="@+id/menu_play_pause"
@@ -109,6 +109,6 @@
     <item
         android:id="@+id/menu_crazy_logger_service"
         android:alphabeticShortcut="Crazy Logger"
-        android:title="Crazy Logger" />
+        android:title="@string/crazy_logger" />
 
 </menu>

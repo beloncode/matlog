@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
+@SuppressWarnings("unused")
 public class BitmapHelper {
 
     private static int sIconSize = -1;

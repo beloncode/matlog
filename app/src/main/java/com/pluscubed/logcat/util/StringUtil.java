@@ -13,10 +13,9 @@ public class StringUtil {
     /**
      * Pad the specified number of spaces to the input string to make it that length
      *
-     * @param input
-     * @param size
-     * @return
      */
+
+    @SuppressWarnings("unused")
     public static String padLeft(String input, int size) {
 
         if (input.length() > size) {
@@ -46,13 +45,13 @@ public class StringUtil {
             lastIndex = index + delimiter.length();
             index = str.indexOf(delimiter, index + delimiter.length());
         }
-        result.add(str.substring(lastIndex, str.length()));
+        result.add(str.substring(lastIndex));
 
         return ArrayUtil.toArray(result, String.class);
     }
 
     /*
-        * Replace all occurances of the searchString in the originalString with the replaceString.  Faster than the
+        * Replace all occurrences of the searchString in the originalString with the replaceString.  Faster than the
         * String.replace() method.  Does not use regexes.
         * <p/>
         * If your searchString is empty, this will spin forever.
@@ -63,6 +62,8 @@ public class StringUtil {
         * @param replaceString
         * @return
         */
+
+    @SuppressWarnings("unused")
     public static String replace(String originalString, String searchString, String replaceString) {
         StringBuilder sb = new StringBuilder(originalString);
         int index = sb.indexOf(searchString);
@@ -74,6 +75,7 @@ public class StringUtil {
         return sb.toString();
     }
 
+    @SuppressWarnings("unused")
     public static String join(String delimiter, String[] strings) {
 
         if (strings.length == 0) {
@@ -89,6 +91,7 @@ public class StringUtil {
     }
 
 
+    @SuppressWarnings("unused")
     public static int computeLevenshteinDistance(CharSequence str1, CharSequence str2) {
 
 
@@ -153,6 +156,7 @@ public class StringUtil {
         return Math.min(Math.min(a, b), c);
     }
 
+    @SuppressWarnings("unused")
     public static String join(int[] arr, String delimiter) {
 
         if (arr.length == 0) {
@@ -162,13 +166,14 @@ public class StringUtil {
         StringBuilder sb = new StringBuilder();
 
         for (int i : arr) {
-            sb.append(delimiter).append(Integer.toString(i));
+            sb.append(delimiter).append(i);
         }
 
         return sb.substring(delimiter.length());
 
     }
 
+    @SuppressWarnings("unused")
     public static String capitalize(String str) {
 
         StringBuilder sb = new StringBuilder(str);
@@ -201,9 +206,6 @@ public class StringUtil {
     /**
      * same as String.contains, but ignores case.
      *
-     * @param str
-     * @param query
-     * @return
      */
     public static boolean containsIgnoreCase(String str, String query) {
         if (str != null && query != null) {

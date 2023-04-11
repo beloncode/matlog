@@ -24,7 +24,7 @@ public class PreferenceHelper {
     private static ColorScheme colorScheme = null;
     private static int displayLimit = -1;
     private static String filterPattern = null;
-    private static UtilLogger log = new UtilLogger(PreferenceHelper.class);
+    private static final UtilLogger log = new UtilLogger(PreferenceHelper.class);
 
     public static void clearCache() {
         defaultLogLevel = null;
@@ -38,21 +38,17 @@ public class PreferenceHelper {
     /**
      * Record that we managed to get root in JellyBean.
      *
-     * @param context
-     * @return
      */
     public static void setJellybeanRootRan(Context context) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         Editor editor = sharedPrefs.edit();
         editor.putBoolean(context.getString(R.string.pref_ran_jellybean_su_update), true);
-        editor.commit();
+        editor.apply();
     }
 
     /**
      * Return true if we have root in jelly bean.
      *
-     * @param context
-     * @return
      */
     public static boolean getJellybeanRootRan(Context context) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -186,15 +182,15 @@ public class PreferenceHelper {
                     context.getText(R.string.text_size_medium_value).toString());
 
             if (textSizePref.contentEquals(context.getText(R.string.text_size_xsmall_value))) {
-                cacheTextsize(context, R.dimen.text_size_xsmall);
+                cacheTextSize(context, R.dimen.text_size_xsmall);
             } else if (textSizePref.contentEquals(context.getText(R.string.text_size_small_value))) {
-                cacheTextsize(context, R.dimen.text_size_small);
+                cacheTextSize(context, R.dimen.text_size_small);
             } else if (textSizePref.contentEquals(context.getText(R.string.text_size_medium_value))) {
-                cacheTextsize(context, R.dimen.text_size_medium);
+                cacheTextSize(context, R.dimen.text_size_medium);
             } else if (textSizePref.contentEquals(context.getText(R.string.text_size_large_value))) {
-                cacheTextsize(context, R.dimen.text_size_large);
+                cacheTextSize(context, R.dimen.text_size_large);
             } else { // xlarge
-                cacheTextsize(context, R.dimen.text_size_xlarge);
+                cacheTextSize(context, R.dimen.text_size_xlarge);
             }
         }
 
@@ -202,7 +198,7 @@ public class PreferenceHelper {
 
     }
 
-    private static void cacheTextsize(Context context, int dimenId) {
+    private static void cacheTextSize(Context context, int dimenId) {
 
         float unscaledSize = context.getResources().getDimension(dimenId);
 
@@ -287,6 +283,7 @@ public class PreferenceHelper {
         return Arrays.asList(StringUtil.split(value, MultipleChoicePreference.DELIMITER));
     }
 
+    @SuppressWarnings("unused")
     public static List<String> getBufferNames(Context context) {
         List<String> buffers = getBuffers(context);
 
@@ -301,6 +298,7 @@ public class PreferenceHelper {
         return bufferNames;
     }
 
+    @SuppressWarnings("unused")
     public static void setBuffer(Context context, int stringResId) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 

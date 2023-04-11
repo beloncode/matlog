@@ -15,11 +15,11 @@ import java.util.List;
 
 public class SingleLogcatReader extends AbsLogcatReader {
 
-    private static UtilLogger log = new UtilLogger(SingleLogcatReader.class);
+    private static final UtilLogger log = new UtilLogger(SingleLogcatReader.class);
 
     private Process logcatProcess;
     private BufferedReader bufferedReader;
-    private String logBuffer;
+    private final String logBuffer;
     private String lastLine;
 
     public SingleLogcatReader(boolean recordingMode, String logBuffer, String lastLine) throws IOException {
@@ -37,7 +37,7 @@ public class SingleLogcatReader extends AbsLogcatReader {
                 .getInputStream()), 8192);
     }
 
-
+    @SuppressWarnings("unused")
     public String getLogBuffer() {
         return logBuffer;
     }
@@ -76,6 +76,7 @@ public class SingleLogcatReader extends AbsLogcatReader {
 
     }
 
+    @SuppressWarnings("unused")
     private boolean isAfterLastTime(String line) {
         // doing a string comparison is sufficient to determine whether this line is chronologically
         // after the last line, because the format they use is exactly the same and

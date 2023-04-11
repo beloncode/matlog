@@ -21,9 +21,9 @@ import java.util.concurrent.BlockingQueue;
 public class MultipleLogcatReader extends AbsLogcatReader {
 
     private static final String DUMMY_NULL = "";
-    private static UtilLogger log = new UtilLogger(MultipleLogcatReader.class);
-    private List<ReaderThread> readerThreads = new LinkedList<>();
-    private BlockingQueue<String> queue = new ArrayBlockingQueue<>(1);
+    private static final UtilLogger log = new UtilLogger(MultipleLogcatReader.class);
+    private final List<ReaderThread> readerThreads = new LinkedList<>();
+    private final BlockingQueue<String> queue = new ArrayBlockingQueue<>(1);
 
     public MultipleLogcatReader(boolean recordingMode,
                                 Map<String, String> lastLines) throws IOException {

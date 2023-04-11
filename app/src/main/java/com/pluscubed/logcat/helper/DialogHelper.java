@@ -76,7 +76,7 @@ public class DialogHelper {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View filterView = inflater.inflate(R.layout.dialog_recording_filter, null, false);
 
-        // add suggestions to autocompletetextview
+        // add suggestions to "autocompletetextview"
         final AutoCompleteTextView autoCompleteTextView = filterView.findViewById(android.R.id.text1);
         autoCompleteTextView.setText(queryFilterText);
 
@@ -144,6 +144,7 @@ public class DialogHelper {
 
     public static void initFilenameInputDialog(MaterialDialog show) {
         final EditText editText = show.getInputEditText();
+        assert editText != null;
         editText.setSingleLine();
         editText.setInputType(InputType.TYPE_TEXT_VARIATION_FILTER);
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);

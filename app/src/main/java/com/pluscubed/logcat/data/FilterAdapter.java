@@ -38,14 +38,8 @@ public class FilterAdapter extends ArrayAdapter<FilterItem> {
         ImageView button = convertView.findViewById(android.R.id.button1);
         button.setOnClickListener(v -> {
             //delete
-            CatlogDBHelper dbHelper = null;
-            try {
-                dbHelper = new CatlogDBHelper(getContext());
+            try (CatlogDBHelper dbHelper = new CatlogDBHelper(getContext())) {
                 dbHelper.deleteFilter(filterItem.getId());
-            } finally {
-                if (dbHelper != null) {
-                    dbHelper.close();
-                }
             }
             remove(filterItem);
             notifyDataSetChanged();

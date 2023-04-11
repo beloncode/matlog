@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ServiceHelper {
 
-    private static UtilLogger log = new UtilLogger(ServiceHelper.class);
+    private static final UtilLogger log = new UtilLogger(ServiceHelper.class);
 
     public static void startOrStopCrazyLogger(Context context) {
 

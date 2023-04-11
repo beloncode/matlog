@@ -25,14 +25,14 @@ public class LogcatReaderLoader implements Parcelable {
             return new LogcatReaderLoader[size];
         }
     };
-    private Map<String, String> lastLines = new HashMap<>();
-    private boolean recordingMode;
-    private boolean multiple;
+    private final Map<String, String> lastLines = new HashMap<>();
+    private final boolean recordingMode;
+    private final boolean multiple;
 
     private LogcatReaderLoader(Parcel in) {
         this.recordingMode = in.readInt() == 1;
         this.multiple = in.readInt() == 1;
-        Bundle bundle = in.readBundle();
+        Bundle bundle = in.readBundle(getClass().getClassLoader());
         for (String key : bundle.keySet()) {
             lastLines.put(key, bundle.getString(key));
         }

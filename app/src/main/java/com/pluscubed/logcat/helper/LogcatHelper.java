@@ -12,10 +12,12 @@ import java.util.List;
 public class LogcatHelper {
 
     public static final String BUFFER_MAIN = "main";
+    @SuppressWarnings("unused")
     public static final String BUFFER_EVENTS = "events";
+    @SuppressWarnings("unused")
     public static final String BUFFER_RADIO = "radio";
 
-    private static UtilLogger log = new UtilLogger(LogcatHelper.class);
+    private static final UtilLogger log = new UtilLogger(LogcatHelper.class);
 
     public static Process getLogcatProcess(String buffer) throws IOException {
 
@@ -47,8 +49,7 @@ public class LogcatHelper {
             args.add("-d"); // -d just dumps the whole thing
 
             dumpLogcatProcess = RuntimeHelper.exec(args);
-            reader = new BufferedReader(new InputStreamReader(dumpLogcatProcess
-                    .getInputStream()), 8192);
+            reader = new BufferedReader(new InputStreamReader(dumpLogcatProcess.getInputStream()));
 
             String line;
             while ((line = reader.readLine()) != null) {

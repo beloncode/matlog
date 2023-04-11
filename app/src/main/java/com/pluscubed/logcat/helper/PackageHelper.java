@@ -7,7 +7,7 @@ import com.pluscubed.logcat.util.UtilLogger;
 
 public class PackageHelper {
 
-    private static UtilLogger log = new UtilLogger(PackageHelper.class);
+    private static final UtilLogger log = new UtilLogger(PackageHelper.class);
 
     public static String getVersionName(Context context) {
         try {

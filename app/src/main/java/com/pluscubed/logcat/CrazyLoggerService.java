@@ -18,7 +18,7 @@ public class CrazyLoggerService extends IntentService {
 
     private static final long INTERVAL = 300;
 
-    private static UtilLogger log = new UtilLogger(CrazyLoggerService.class);
+    private static final UtilLogger log = new UtilLogger(CrazyLoggerService.class);
 
     private boolean kill = false;
 

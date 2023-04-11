@@ -69,8 +69,8 @@ public class UpdateHelper {
             return isJellyBean && !PreferenceHelper.getJellybeanRootRan(context);
         }, SuperUserHelper::requestRoot),;
 
-        private Function<Context, Boolean> isNecessary;
-        private Callback<Context> runUpdate;
+        private final Function<Context, Boolean> isNecessary;
+        private final Callback<Context> runUpdate;
 
         Update(Function<Context, Boolean> isNecessary, Callback<Context> runUpdate) {
             this.isNecessary = isNecessary;

@@ -70,7 +70,7 @@ import com.pluscubed.logcat.db.CatlogDBHelper;
 import com.pluscubed.logcat.db.FilterItem;
 import com.pluscubed.logcat.helper.BuildHelper;
 import com.pluscubed.logcat.helper.DialogHelper;
-import com.pluscubed.logcat.helper.DmesgHelper;
+import com.pluscubed.logcat.helper.KernelBufferHelper;
 import com.pluscubed.logcat.helper.PreferenceHelper;
 import com.pluscubed.logcat.helper.SaveLogHelper;
 import com.pluscubed.logcat.helper.ServiceHelper;
@@ -85,11 +85,13 @@ import com.pluscubed.logcat.util.UtilLogger;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.pluscubed.logcat.data.LogLineViewHolder.CONTEXT_MENU_COPY_ID;
@@ -117,7 +119,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
     private static final String INTENT_FILENAME = "filename";
 
-    private static UtilLogger log = new UtilLogger(LogcatActivity.class);
+    private static final UtilLogger log = new UtilLogger(LogcatActivity.class);
 
     private LogLineAdapter mLogListAdapter;
     private LogReaderAsyncTask mTask;
@@ -131,9 +133,9 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
     private boolean mDynamicallyEnteringSearchText;
     private boolean partialSelectMode;
-    private List<LogLine> partiallySelectedLogLines = new ArrayList<>(2);
+    private final List<LogLine> partiallySelectedLogLines = new ArrayList<>(2);
 
-    private Set<String> mSearchSuggestionsSet = new HashSet<>();
+    private final Set<String> mSearchSuggestionsSet = new HashSet<>();
     private CursorAdapter mSearchSuggestionsAdapter;
 
     private String mCurrentlyOpenLog = null;
@@ -293,16 +295,10 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
     }
 
     private void addFiltersToSuggestions() {
-        CatlogDBHelper dbHelper = null;
-        try {
-            dbHelper = new CatlogDBHelper(this);
+        try (CatlogDBHelper dbHelper = new CatlogDBHelper(this)) {
 
             for (FilterItem filterItem : dbHelper.findFilterItems()) {
                 addToAutocompleteSuggestions(filterItem.getText());
-            }
-        } finally {
-            if (dbHelper != null) {
-                dbHelper.close();
             }
         }
 
@@ -386,6 +382,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -405,6 +402,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
         updateUiForFilename();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void onSettingsActivityResult(final Intent data) {
         mHandler.post(() -> {
             updateBackgroundColor();
@@ -500,7 +498,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        invalidateDarkOrLightMenuItems(this, menu);
+        invalidateDarkOrLightMenuItems(menu);
 
         boolean showingMainLog = (mTask != null);
 
@@ -597,6 +595,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -703,6 +702,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void showSearchByDialog(final LogLine logLine) {
         int tagColor = LogLineAdapterUtil.getOrCreateTagColor(this, logLine.getTag());
 
@@ -713,6 +713,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
                 .show();
 
         LinearLayout customView = (LinearLayout) dialog.getCustomView();
+        assert customView != null;
         LinearLayout tag = customView.findViewById(R.id.dialog_searchby_tag_linear);
         LinearLayout pid = customView.findViewById(R.id.dialog_searchby_pid_linear);
 
@@ -770,16 +771,10 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
         new Thread(() -> {
             Log.e("t", "Started thread");
-            final List<FilterItem> filters = new ArrayList<>();
+            final List<FilterItem> filters;
 
-            CatlogDBHelper dbHelper = null;
-            try {
-                dbHelper = new CatlogDBHelper(LogcatActivity.this);
-                filters.addAll(dbHelper.findFilterItems());
-            } finally {
-                if (dbHelper != null) {
-                    dbHelper.close();
-                }
+            try (CatlogDBHelper dbHelper = new CatlogDBHelper(LogcatActivity.this)) {
+                filters = new ArrayList<>(dbHelper.findFilterItems());
             }
 
             Collections.sort(filters);
@@ -863,7 +858,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
             new Thread(() -> {
                 CatlogDBHelper dbHelper = null;
-                FilterItem item = null;
+                FilterItem item;
                 try {
                     dbHelper = new CatlogDBHelper(LogcatActivity.this);
                     item = dbHelper.addFilter(trimmed);
@@ -929,11 +924,12 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
         startActivityForResult(intent, REQUEST_CODE_SETTINGS);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void expandOrCollapseAll(boolean change) {
 
         mCollapsedMode = change != mCollapsedMode;
 
-        int oldFirstVisibleItem = ((LinearLayoutManager) ((RecyclerView) findViewById(R.id.list)).getLayoutManager()).findFirstVisibleItemPosition();
+        int oldFirstVisibleItem = ((LinearLayoutManager) Objects.requireNonNull(((RecyclerView) findViewById(R.id.list)).getLayoutManager())).findFirstVisibleItemPosition();
 
         for (LogLine logLine : mLogListAdapter.getTrueValues()) {
             if (logLine != null) {
@@ -943,7 +939,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
         mLogListAdapter.notifyDataSetChanged();
 
-        // ensure that we either stay autoscrolling at the bottom of the list...
+        // ensure that we either stay auto-scrolling at the bottom of the list...
 
         if (mAutoscrollToBottom) {
 
@@ -997,9 +993,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
                 .onNeutral((dialog, which) -> {
                     boolean[] allChecked = new boolean[logFileAdapter.getCount()];
 
-                    for (int i = 0; i < allChecked.length; i++) {
-                        allChecked[i] = true;
-                    }
+                    Arrays.fill(allChecked, true);
                     verifyDelete(filenameArray, allChecked, dialog);
                 })
                 .onPositive((dialog, which) -> verifyDelete(filenameArray, logFileAdapter.getCheckedItems(), dialog))
@@ -1084,7 +1078,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
                 .negativeText(android.R.string.cancel)
                 .positiveText(android.R.string.ok)
                 .onPositive((materialDialog, dialogAction) -> {
-                    sendLogToTargetApp(false, includeDeviceInfoCheckBox.isChecked(), includeDmesgCheckBox.isChecked());
+                    sendLogToTargetApp(includeDeviceInfoCheckBox.isChecked(), includeDmesgCheckBox.isChecked());
                     materialDialog.dismiss();
                 }).show();
     }
@@ -1124,9 +1118,9 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
                 }).show();
     }
 
-    protected void sendLogToTargetApp(final boolean asText, final boolean includeDeviceInfo, final boolean includeDmesg) {
+    protected void sendLogToTargetApp(final boolean includeDeviceInfo, final boolean includeDmesg) {
 
-        if (!(mCurrentlyOpenLog == null && asText) && !SaveLogHelper.checkSdCard(this)) {
+        if (!SaveLogHelper.checkSdCard(this)) {
             // if asText is false, then we need to check to make sure we can access the sdcard
             return;
         }
@@ -1138,7 +1132,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
             @Override
             public void run() {
                 ui.post(() -> {
-                    if (asText || mCurrentlyOpenLog == null || includeDeviceInfo || includeDmesg) {
+                    if (mCurrentlyOpenLog == null || includeDeviceInfo || includeDmesg) {
                         MaterialDialog.Builder progressDialog = new MaterialDialog.Builder(LogcatActivity.this);
                         progressDialog.title(R.string.dialog_please_wait);
                         progressDialog.content(getString(R.string.dialog_compiling_log));
@@ -1148,15 +1142,12 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
                         mDialog.setCancelable(false);
                     }
                 });
-                final SendLogDetails sendLogDetails = getSendLogDetails(asText, includeDeviceInfo, includeDmesg);
+                final SendLogDetails sendLogDetails = getSendLogDetails(includeDeviceInfo, includeDmesg);
                 ui.post(() -> {
                     startChooser(LogcatActivity.this, sendLogDetails.getSubject(), sendLogDetails.getBody(),
                             sendLogDetails.getAttachmentType(), sendLogDetails.getAttachment());
                     if (mDialog != null && mDialog.isShowing()) {
                         mDialog.dismiss();
-                    }
-                    if (asText && sendLogDetails.getBody().length() > 100000) {
-                        Snackbar.make(findViewById(android.R.id.content), getString(R.string.as_text_not_work), Snackbar.LENGTH_LONG).show();
                     }
                 });
             }
@@ -1187,6 +1178,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
                         mDialog.setCancelable(false);
                     }
                 });
+                @SuppressWarnings("unused")
                 final File zipFile = saveLogAsZip(includeDeviceInfo, includeDmesg);
                 ui.post(() -> {
                     if (mDialog != null && mDialog.isShowing()) {
@@ -1200,48 +1192,36 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
     }
 
     @WorkerThread
-    private SendLogDetails getSendLogDetails(boolean asText, boolean includeDeviceInfo, boolean includeDmesg) {
+    private SendLogDetails getSendLogDetails(boolean includeDeviceInfo, boolean includeDmesg) {
         SendLogDetails sendLogDetails = new SendLogDetails();
-        StringBuilder body = new StringBuilder();
 
         List<File> files = new ArrayList<>();
         SaveLogHelper.cleanTemp();
 
-        if (!asText) {
-            if (mCurrentlyOpenLog != null) { // use saved log file
-                files.add(SaveLogHelper.getFile(mCurrentlyOpenLog));
-            } else { // create a temp file to hold the current, unsaved log
-                File tempLogFile = SaveLogHelper.saveTemporaryFile(this,
-                        SaveLogHelper.TEMP_LOG_FILENAME, null, getCurrentLogAsListOfStrings());
-                files.add(tempLogFile);
-            }
+        if (mCurrentlyOpenLog != null) { // use saved log file
+            files.add(SaveLogHelper.getFile(mCurrentlyOpenLog));
+        } else { // create a temp file to hold the current, unsaved log
+            File tempLogFile = SaveLogHelper.saveTemporaryFile(
+                    SaveLogHelper.TEMP_LOG_FILENAME, null, getCurrentLogAsListOfStrings());
+            files.add(tempLogFile);
         }
 
         if (includeDeviceInfo) {
             // include device info
             String deviceInfo = BuildHelper.getBuildInformationAsString();
-            if (asText) {
-                // append to top of body
-                body.append(deviceInfo).append('\n');
-            } else {
-                // or create as separate file called device.txt
-                File tempFile = SaveLogHelper.saveTemporaryFile(this,
-                        SaveLogHelper.TEMP_DEVICE_INFO_FILENAME, deviceInfo, null);
-                files.add(tempFile);
-            }
+            // or create as separate file called device.txt
+            File tempFile = SaveLogHelper.saveTemporaryFile(
+                    SaveLogHelper.TEMP_DEVICE_INFO_FILENAME, deviceInfo, null);
+            files.add(tempFile);
         }
 
         if (includeDmesg) {
-            File tempDmsgFile = SaveLogHelper.saveTemporaryFile(this,
-                    SaveLogHelper.TEMP_DMESG_FILENAME, null, DmesgHelper.getDmsg());
-            files.add(tempDmsgFile);
+            File tempKernelBufferFile = SaveLogHelper.saveTemporaryFile(
+                    SaveLogHelper.TEMP_DMESG_FILENAME, null, KernelBufferHelper.getKernelBuffer());
+            files.add(tempKernelBufferFile);
         }
 
-        if (asText) {
-            body.append(getCurrentLogAsCharSequence());
-        }
-
-        sendLogDetails.setBody(body.toString());
+        sendLogDetails.setBody("");
         sendLogDetails.setSubject(getString(R.string.subject_log_report));
 
         // either zip up multiple files or just attach the one file
@@ -1256,6 +1236,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
             default: // 2 files - need to zip them up
                 File zipFile = SaveLogHelper.saveTemporaryZipFile(SaveLogHelper.createLogFilename(true), files);
 
+                assert zipFile != null;
                 sendLogDetails.setSubject(zipFile.getName());
                 sendLogDetails.setAttachmentType(SendLogDetails.AttachmentType.Zip);
                 sendLogDetails.setAttachment(zipFile);
@@ -1272,7 +1253,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
         if (mCurrentlyOpenLog != null) { // use saved log file
             files.add(SaveLogHelper.getFile(mCurrentlyOpenLog));
         } else { // create a temp file to hold the current, unsaved log
-            File tempLogFile = SaveLogHelper.saveTemporaryFile(this,
+            File tempLogFile = SaveLogHelper.saveTemporaryFile(
                     SaveLogHelper.TEMP_LOG_FILENAME, null, getCurrentLogAsListOfStrings());
             files.add(tempLogFile);
         }
@@ -1281,20 +1262,18 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
             // include device info
             String deviceInfo = BuildHelper.getBuildInformationAsString();
             // or create as separate file called device.txt
-            File tempFile = SaveLogHelper.saveTemporaryFile(this,
+            File tempFile = SaveLogHelper.saveTemporaryFile(
                     SaveLogHelper.TEMP_DEVICE_INFO_FILENAME, deviceInfo, null);
             files.add(tempFile);
         }
 
         if (includeDmesg) {
-            File tempDmsgFile = SaveLogHelper.saveTemporaryFile(this,
-                    SaveLogHelper.TEMP_DMESG_FILENAME, null, DmesgHelper.getDmsg());
-            files.add(tempDmsgFile);
+            File tempKernelBufferFile = SaveLogHelper.saveTemporaryFile(
+                    SaveLogHelper.TEMP_DMESG_FILENAME, null, KernelBufferHelper.getKernelBuffer());
+            files.add(tempKernelBufferFile);
         }
 
-        File zipFile = SaveLogHelper.saveZipFile(SaveLogHelper.createLogFilename(true), files);
-
-        return zipFile;
+        return SaveLogHelper.saveZipFile(SaveLogHelper.createLogFilename(true), files);
     }
 
     private List<CharSequence> getCurrentLogAsListOfStrings() {
@@ -1308,6 +1287,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
         return result;
     }
 
+    @SuppressWarnings("unused")
     private CharSequence getCurrentLogAsCharSequence() {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -1453,7 +1433,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
     private void openLogFile(final String filename) {
 
-        // do in background to avoid jank
+        // do in background to avoid junk
 
         @SuppressLint("StaticFieldLeak") final AsyncTask<Void, Void, List<LogLine>> openFileTask = new AsyncTask<Void, Void, List<LogLine>>() {
 
@@ -1478,7 +1458,9 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
                     String line = lines.get(lineNumber);
                     logLines.add(LogLine.newLogLine(line, !mCollapsedMode, mFilterPattern));
                     final int finalLineNumber = lineNumber;
-                    runOnUiThread(() -> ((CircularProgressBar) findViewById(R.id.main_progress_bar)).setProgress(finalLineNumber * 100 / linesSize));
+                    //noinspection IntegerDivisionInFloatingPointContext
+                    runOnUiThread(() -> ((CircularProgressBar) findViewById(R.id.main_progress_bar)).setProgress(
+                            finalLineNumber > 0 ? finalLineNumber * 100 / linesSize : 0));
                 }
 
                 // notify the user if the saved file was truncated
@@ -1492,6 +1474,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
                 return logLines;
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             protected void onPostExecute(List<LogLine> logLines) {
                 super.onPostExecute(logLines);
@@ -1593,25 +1576,23 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
         ((RecyclerView) findViewById(R.id.list)).addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
 
                 // update what the first viewable item is
                 final LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-                // if the bottom of the list isn't visible anymore, then stop autoscrolling
-                mAutoscrollToBottom = (layoutManager.findLastCompletelyVisibleItemPosition() == recyclerView.getAdapter().getItemCount() - 1);
+                // if the bottom of the list isn't visible anymore, then stop auto-scrolling
+                assert layoutManager != null;
+                mAutoscrollToBottom = (layoutManager.findLastCompletelyVisibleItemPosition() == Objects.requireNonNull(recyclerView.getAdapter()).getItemCount() - 1);
 
-                // only hide the fast scroll if we're unpaused and at the bottom of the list
-                // TODO:
-                //boolean enableFastScroll = mTask == null || mTask.isPaused() || !mAutoscrollToBottom;
-                //mListView.setFastScrollEnabled(enableFastScroll);
+                // only hide the fast scroll if we're unpause and at the bottom of the list
 
             }
         });
@@ -1718,10 +1699,6 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
 
         mHandler.post(() -> findViewById(R.id.main_background).setBackgroundColor(color));
 
-        //TODO:
-        //mListView.setCacheColorHint(color);
-        //mListView.setDivider(new ColorDrawable(color));
-
     }
 
 
@@ -1744,24 +1721,9 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
     }
 
     @SuppressLint("RestrictedApi")
-    public void invalidateDarkOrLightMenuItems(Context context, Menu menu) {
+    public void invalidateDarkOrLightMenuItems(Menu menu) {
         if (menu instanceof MenuBuilder) {
             ((MenuBuilder) menu).setOptionalIconsVisible(true);
-            /*final boolean darkMode = ThemeUtils.isDarkMode(context);
-            final int textColorPrimary = Utils.resolveColor(context, android.R.attr.textColorPrimary);
-
-            mToolbar.post(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < menu.size(); i++) {
-                        MenuItemImpl item = (MenuItemImpl) menu.getItem(i);
-                        int color = darkMode || item.isActionButton() ? Color.WHITE : textColorPrimary;
-                        if (item.getIcon() != null) {
-                            item.getIcon().setColorFilter(color, PorterDuff.Mode.SRC_IN);
-                        }
-                    }
-                }
-            });*/
         }
     }
 
@@ -1861,6 +1823,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
             doWhenFinished();
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void onProgressUpdate(LogLine... values) {
             super.onProgressUpdate(values);

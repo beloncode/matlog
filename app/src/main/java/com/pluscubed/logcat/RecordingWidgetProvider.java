@@ -22,7 +22,7 @@ public class RecordingWidgetProvider extends AppWidgetProvider {
 
     public static final String URI_SCHEME = "catlog_widget";
 
-    private static UtilLogger log = new UtilLogger(RecordingWidgetProvider.class);
+    private static final UtilLogger log = new UtilLogger(RecordingWidgetProvider.class);
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {

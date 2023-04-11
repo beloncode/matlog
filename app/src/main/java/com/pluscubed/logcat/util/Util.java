@@ -5,6 +5,8 @@ import android.content.Context;
 /**
  * Util
  */
+
+@SuppressWarnings("unused")
 public class Util {
     public static int convertDpToPx(Context context, float dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density

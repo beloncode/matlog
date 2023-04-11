@@ -8,8 +8,6 @@ public interface LogcatReader {
     /**
      * Read a single log line, ala BufferedReader.readLine().
      *
-     * @return
-     * @throws IOException
      */
     String readLine() throws IOException;
 
@@ -18,6 +16,7 @@ public interface LogcatReader {
      */
     void killQuietly();
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean readyToRecord();
 
     List<Process> getProcesses();

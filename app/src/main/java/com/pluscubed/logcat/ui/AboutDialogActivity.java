@@ -3,6 +3,7 @@ package com.pluscubed.logcat.ui;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -19,7 +20,7 @@ import java.io.InputStreamReader;
 
 public class AboutDialogActivity extends BaseActivity {
 
-    private static UtilLogger log = new UtilLogger(AboutDialogActivity.class);
+    private static final UtilLogger log = new UtilLogger(AboutDialogActivity.class);
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -40,12 +41,19 @@ public class AboutDialogActivity extends BaseActivity {
 
 
         public void initializeWebView(WebView view) {
+            String text = "";
+            try {
+                text = loadTextFile("about_body.html");
 
-            String text = loadTextFile(R.raw.about_body);
-            String version = PackageHelper.getVersionName(getActivity());
-            String changelog = loadTextFile(R.raw.changelog);
-            String css = loadTextFile(R.raw.about_css);
-            text = String.format(text, version, changelog, css);
+                final String changelog = loadTextFile("changelog.html");
+                final String css = loadTextFile("about_css.css");
+
+                final String version = PackageHelper.getVersionName(getActivity());
+
+                text = String.format(text, version, changelog, css);
+            } catch (IOException io) {
+                log.e(io, "fixes this");
+            }
 
             WebSettings settings = view.getSettings();
             settings.setDefaultTextEncodingName("utf-8");
@@ -53,12 +61,15 @@ public class AboutDialogActivity extends BaseActivity {
             view.loadDataWithBaseURL(null, text, "text/html", "UTF-8", null);
         }
 
-        private String loadTextFile(int resourceId) {
+        private String loadTextFile(final String resName) throws IOException {
 
-            InputStream is = getResources().openRawResource(resourceId);
+            InputStream is = null;
+            AssetManager assetManager = getContext().getAssets();
 
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                is = assetManager.open(resName);
+            }
             StringBuilder sb = new StringBuilder();
-
             try (BufferedReader buff = new BufferedReader(new InputStreamReader(is))) {
                 while (buff.ready()) {
                     sb.append(buff.readLine()).append("\n");
@@ -87,36 +98,5 @@ public class AboutDialogActivity extends BaseActivity {
         }
 
 
-        /*private void loadExternalUrl(String url) {
-            Intent intent = new Intent();
-            intent.setAction("android.intent.action.VIEW");
-            intent.setData(Uri.parse(url));
-
-            startActivity(intent);
-        }*/
-
-        /*private class AboutWebClient extends WebViewClient {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, final String url) {
-                log.d("shouldOverrideUrlLoading");
-
-                // XXX hack to make the webview go to an external url if the hyperlink is
-                // in my own HTML file - otherwise it says "Page not available" because I'm not calling
-                // loadDataWithBaseURL.  But if I call loadDataWithBaseUrl using a fake URL, then
-                // the links within the page itself don't work!!  Arggggh!!!
-
-                if (url.startsWith("http") || url.startsWith("mailto") || url.startsWith("market")) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadExternalUrl(url);
-                        }
-                    });
-                    return true;
-                }
-                return false;
-            }
-        }*/
     }
 }

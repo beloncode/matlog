@@ -18,6 +18,7 @@
 
 package com.pluscubed.logcat.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,7 +45,7 @@ import java.util.List;
 
 public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> implements Filterable {
 
-    private static UtilLogger log = new UtilLogger(LogLineAdapter.class);
+    private static final UtilLogger log = new UtilLogger(LogLineAdapter.class);
     /**
      * Lock used to modify the content of {@link #mObjects}. Any write operation
      * performed on the array should be synchronized on this lock. This lock is also
@@ -135,6 +137,9 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
      * @param object The object to insert into the array.
      * @param index  The index at which the object must be inserted.
      */
+
+    @SuppressLint("NotifyDataSetChanged")
+    @SuppressWarnings("unused")
     public void insert(LogLine object, int index) {
         if (mOriginalValues != null) {
             synchronized (mLock) {
@@ -152,6 +157,9 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
      *
      * @param object The object to remove.
      */
+
+    @SuppressWarnings("unused")
+    @SuppressLint("NotifyDataSetChanged")
     public void remove(LogLine object) {
         if (mOriginalValues != null) {
             synchronized (mLock) {
@@ -163,6 +171,7 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
         notifyDataSetChanged();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void removeFirst(int n) {
         StopWatch stopWatch = new StopWatch("removeFirst()");
         if (mOriginalValues != null) {
@@ -186,6 +195,7 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
     /**
      * Remove all elements from the list.
      */
+    @SuppressLint("NotifyDataSetChanged")
     public void clear() {
         if (mOriginalValues != null) {
             synchronized (mLock) {
@@ -204,6 +214,8 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
      * @param comparator The comparator used to sort the objects contained
      *                   in this adapter.
      */
+    @SuppressWarnings("unused")
+    @SuppressLint("NotifyDataSetChanged")
     public void sort(Comparator<? super LogLine> comparator) {
         this.mComparator = comparator;
         Collections.sort(mObjects, comparator);
@@ -218,6 +230,7 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
         return mOriginalValues != null ? mOriginalValues : mObjects;
     }
 
+    @NonNull
     @Override
     public LogLineViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_logcat, parent, false);
@@ -341,6 +354,7 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
         return mFilter;
     }
 
+    @SuppressWarnings("unused")
     public List<LogLine> getObjects() {
         return mObjects;
     }
@@ -396,14 +410,13 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
             // search by criteria
             if (!searchCriteria.isEmpty()) {
 
-                final ArrayList<LogLine> values = allValues;
-                final int count = values.size();
+                final int count = allValues.size();
 
                 final ArrayList<LogLine> newValues = new ArrayList<>(count);
 
                 for (int i = 0; i < count; i++) {
-                    final LogLine value = values.get(i);
-                    // search the logline based on the criteria
+                    final LogLine value = allValues.get(i);
+                    // search the log line based on the criteria
                     if (searchCriteria.matches(value)) {
                         newValues.add(value);
                     }
@@ -420,10 +433,10 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
             return finalValues;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            //noinspection unchecked
 
             //log.d("filtering: %s", constraint);
 

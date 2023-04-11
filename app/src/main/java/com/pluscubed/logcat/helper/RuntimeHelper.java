@@ -19,7 +19,6 @@ public class RuntimeHelper {
     /**
      * Exec the arguments, using root if necessary.
      *
-     * @param args
      */
     public static Process exec(List<String> args) throws IOException {
         // since JellyBean, sudo is required to read other apps' logs
@@ -27,15 +26,9 @@ public class RuntimeHelper {
                 && !SuperUserHelper.isFailedToObtainRoot()) {
             Process process = Runtime.getRuntime().exec("su");
 
-            PrintStream outputStream = null;
-            try {
-                outputStream = new PrintStream(new BufferedOutputStream(process.getOutputStream(), 8192));
+            try (PrintStream outputStream = new PrintStream(new BufferedOutputStream(process.getOutputStream(), 8192))) {
                 outputStream.println(TextUtils.join(" ", args));
                 outputStream.flush();
-            } finally {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
             }
 
             return process;

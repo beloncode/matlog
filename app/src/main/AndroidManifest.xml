@@ -5,7 +5,8 @@
 
     <uses-permission android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
@@ -17,11 +18,12 @@
         android:theme="@style/Theme.MatLog"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <!--TODO: REMOVE THIS CONFIGCHANGES ATROCITY-->
+        <!--TODO: REMOVE THIS CONFIG CHANGES ATROCITY-->
         <activity
             android:name="com.pluscubed.logcat.ui.LogcatActivity"
             android:configChanges="screenSize|orientation"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -53,7 +55,8 @@
 
         <service android:name="com.pluscubed.logcat.CrazyLoggerService"/>
 
-        <receiver android:name="com.pluscubed.logcat.RecordingWidgetProvider">
+        <receiver android:name="com.pluscubed.logcat.RecordingWidgetProvider"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -86,7 +89,7 @@
         </provider>
 
         <meta-data
-            android:name="google_analytics_adid_collection_enabled"
+            android:name="google_analytics_add_collection_enabled"
             android:value="false" />
     </application>
 </manifest>
