@@ -218,7 +218,7 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
     @SuppressLint("NotifyDataSetChanged")
     public void sort(Comparator<? super LogLine> comparator) {
         this.mComparator = comparator;
-        Collections.sort(mObjects, comparator);
+        mObjects.sort(comparator);
         notifyDataSetChanged();
     }
 
@@ -427,7 +427,7 @@ public class LogLineAdapter extends RecyclerView.Adapter<LogLineViewHolder> impl
 
             // sort here to ensure that filtering the list doesn't mess up the sorting
             if (mComparator != null) {
-                Collections.sort(finalValues, mComparator);
+                finalValues.sort(mComparator);
             }
 
             return finalValues;

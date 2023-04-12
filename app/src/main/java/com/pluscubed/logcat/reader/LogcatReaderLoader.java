@@ -74,7 +74,7 @@ public class LogcatReaderLoader implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, int flags) {
         dest.writeInt(recordingMode ? 1 : 0);
         dest.writeInt(multiple ? 1 : 0);
         Bundle bundle = new Bundle();
