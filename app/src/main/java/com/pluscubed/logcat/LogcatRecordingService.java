@@ -126,6 +126,7 @@ public class LogcatRecordingService extends IntentService {
         handleCommand();
     }
 
+    @SuppressLint("LaunchActivityFromNotification")
     private void handleCommand() {
 
         // notify the widgets that we're running
@@ -139,8 +140,8 @@ public class LogcatRecordingService extends IntentService {
         stopRecordingIntent.setData(Uri.withAppendedPath(Uri.parse(URI_SCHEME + "://stop/"),
                 Long.toHexString(new Random().nextLong())));
 
-        @SuppressLint({"UnspecifiedImmutableFlag", "LaunchActivityFromNotification"}) PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-                0 /* no requestCode */, stopRecordingIntent, PendingIntent.FLAG_ONE_SHOT);
+        @SuppressLint({"LaunchActivityFromNotification"}) PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                0 /* no requestCode */, stopRecordingIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         final String CHANNEL_ID = "matlog_logging_channel";
         // Set the icon, scrolling text and timestamp

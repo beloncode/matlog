@@ -260,7 +260,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
             intent.setData(uri);
             startActivity(intent);
 
-            return true;
+            return false;
         }
 
         if (ContextCompat.checkSelfPermission(this, requiredPerms[0])
@@ -801,7 +801,7 @@ public class LogcatActivity extends BaseActivity implements FilterListener, LogL
     private void showFiltersDialog() {
 
         new Thread(() -> {
-            Log.e("t", "Started thread");
+            Log.i("MatlogThread", "Thread has started");
             final List<FilterItem> filters;
 
             try (CatlogDBHelper dbHelper = new CatlogDBHelper(LogcatActivity.this)) {
