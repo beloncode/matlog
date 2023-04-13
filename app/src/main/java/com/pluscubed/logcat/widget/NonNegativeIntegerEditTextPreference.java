@@ -11,19 +11,21 @@ import com.afollestad.materialdialogs.prefs.MaterialEditTextPreference;
  *
  * @author nlawson
  */
-public class NonnegativeIntegerEditTextPreference extends MaterialEditTextPreference {
-
-    public NonnegativeIntegerEditTextPreference(Context context, AttributeSet attrs, int defStyle) {
+public class NonNegativeIntegerEditTextPreference extends MaterialEditTextPreference {
+    @SuppressWarnings("unused")
+    public NonNegativeIntegerEditTextPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setUpEditText();
     }
 
-    public NonnegativeIntegerEditTextPreference(Context context, AttributeSet attrs) {
+    @SuppressWarnings("unused")
+    public NonNegativeIntegerEditTextPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         setUpEditText();
     }
 
-    public NonnegativeIntegerEditTextPreference(Context context) {
+    @SuppressWarnings("unused")
+    public NonNegativeIntegerEditTextPreference(Context context) {
         super(context);
         setUpEditText();
     }

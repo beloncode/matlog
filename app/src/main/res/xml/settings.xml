@@ -65,14 +65,14 @@
 
     <PreferenceCategory android:title="@string/pref_cat_advanced">
 
-        <com.pluscubed.logcat.widget.NonnegativeIntegerEditTextPreference
+        <com.pluscubed.logcat.widget.NonNegativeIntegerEditTextPreference
             android:defaultValue="@string/pref_log_line_period_default"
             android:key="@string/pref_log_line_period"
             android:persistent="true"
             android:summary="@string/pref_log_line_period_summary"
             android:title="@string/pref_log_line_period_title" />
 
-        <com.pluscubed.logcat.widget.NonnegativeIntegerEditTextPreference
+        <com.pluscubed.logcat.widget.NonNegativeIntegerEditTextPreference
             android:defaultValue="@string/pref_display_limit_default"
             android:key="@string/pref_display_limit"
             android:persistent="true"
