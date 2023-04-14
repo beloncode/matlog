@@ -58,7 +58,7 @@ public class LogLine {
             startIdx = TIMESTAMP_LENGTH; // cut off timestamp
         }
 
-        Matcher matcher = logPattern.matcher(originalLine);
+        final Matcher matcher = logPattern.matcher(originalLine);
 
         if (matcher.find(startIdx)) {
             char logLevelChar = Objects.requireNonNull(matcher.group(1)).charAt(0);

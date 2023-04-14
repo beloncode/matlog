@@ -26,16 +26,16 @@ public class FilterAdapter extends ArrayAdapter<FilterItem> {
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item_filter, parent, false);
         }
 
         final FilterItem filterItem = getItem(position);
 
-        TextView textView = convertView.findViewById(android.R.id.text1);
+        final TextView textView = convertView.findViewById(android.R.id.text1);
         textView.setText(filterItem.getText());
         // add listener to the delete button
-        ImageView button = convertView.findViewById(android.R.id.button1);
+        final ImageView button = convertView.findViewById(android.R.id.button1);
         button.setOnClickListener(v -> {
             //delete
             try (CatlogDBHelper dbHelper = new CatlogDBHelper(getContext())) {

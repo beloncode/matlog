@@ -8,8 +8,8 @@ import java.util.Comparator;
 public class FilterItem implements Comparable<FilterItem> {
 
     public static final Comparator<FilterItem> DEFAULT_COMPARATOR = (lhs, rhs) -> {
-        String leftText = lhs.text != null ? lhs.text : "";
-        String rightText = rhs.text != null ? rhs.text : "";
+        final String leftText = lhs.text != null ? lhs.text : "";
+        final String rightText = rhs.text != null ? rhs.text : "";
         return leftText.compareToIgnoreCase(rightText);
     };
     private int id;
@@ -19,7 +19,7 @@ public class FilterItem implements Comparable<FilterItem> {
     }
 
     public static FilterItem create(int id, String text) {
-        FilterItem filterItem = new FilterItem();
+        final FilterItem filterItem = new FilterItem();
         filterItem.id = id;
         filterItem.text = text;
         return filterItem;

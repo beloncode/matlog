@@ -19,7 +19,7 @@ public class ServiceHelper {
     public static void startOrStopCrazyLogger(Context context) {
 
         boolean alreadyRunning = checkIfServiceIsRunning(context, CrazyLoggerService.class);
-        Intent intent = new Intent(context, CrazyLoggerService.class);
+        final Intent intent = new Intent(context, CrazyLoggerService.class);
 
         if (!alreadyRunning) {
             context.startService(intent);
@@ -30,7 +30,7 @@ public class ServiceHelper {
     }
 
     public static synchronized void stopBackgroundServiceIfRunning(Context context) {
-        boolean alreadyRunning = ServiceHelper.checkIfServiceIsRunning(context, LogcatRecordingService.class);
+        final boolean alreadyRunning = ServiceHelper.checkIfServiceIsRunning(context, LogcatRecordingService.class);
 
         log.d("Is CatlogService running: %s", alreadyRunning);
 

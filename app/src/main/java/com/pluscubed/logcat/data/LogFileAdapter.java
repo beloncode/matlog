@@ -41,19 +41,19 @@ public class LogFileAdapter extends ArrayAdapter<CharSequence> {
     @Override
     public View getView(int position, View view, @NonNull ViewGroup parent) {
 
-        Context context = parent.getContext();
+        final Context context = parent.getContext();
 
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(resId, parent, false);
         }
 
-        CheckBox box = view.findViewById(android.R.id.checkbox);
-        RadioButton button = view.findViewById(android.R.id.button1);
-        TextView text1 = view.findViewById(android.R.id.text1);
-        TextView text2 = view.findViewById(android.R.id.text2);
+        final CheckBox box = view.findViewById(android.R.id.checkbox);
+        final RadioButton button = view.findViewById(android.R.id.button1);
+        final TextView text1 = view.findViewById(android.R.id.text1);
+        final TextView text2 = view.findViewById(android.R.id.text2);
 
-        CharSequence filename = objects.get(position);
+        final CharSequence filename = objects.get(position);
 
         text1.setText(filename);
 
@@ -64,8 +64,8 @@ public class LogFileAdapter extends ArrayAdapter<CharSequence> {
             button.setChecked(checked == position);
         }
 
-        Date lastModified = SaveLogHelper.getLastModifiedDate(filename.toString());
-        DateFormat dateFormat = DateFormat.getDateTimeInstance();
+        final Date lastModified = SaveLogHelper.getLastModifiedDate(filename.toString());
+        final DateFormat dateFormat = DateFormat.getDateTimeInstance();
 
         text2.setText(dateFormat.format(lastModified));
 

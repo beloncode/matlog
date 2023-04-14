@@ -24,7 +24,7 @@ public class RuntimeHelper {
         // since JellyBean, sudo is required to read other apps' logs
         if (VersionHelper.getVersionSdkIntCompat() >= VersionHelper.VERSION_JELLYBEAN
                 && !SuperUserHelper.isFailedToObtainRoot()) {
-            Process process = Runtime.getRuntime().exec("su");
+            final Process process = Runtime.getRuntime().exec("su");
 
             try (PrintStream outputStream = new PrintStream(new BufferedOutputStream(process.getOutputStream(), 8192))) {
                 outputStream.println(TextUtils.join(" ", args));

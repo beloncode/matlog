@@ -21,13 +21,13 @@ public class LogcatHelper {
 
     public static Process getLogcatProcess(String buffer) throws IOException {
 
-        List<String> args = getLogcatArgs(buffer);
+        final List<String> args = getLogcatArgs(buffer);
 
         return RuntimeHelper.exec(args);
     }
 
     private static List<String> getLogcatArgs(String buffer) {
-        List<String> args = new ArrayList<>(Arrays.asList("logcat", "-v", "time"));
+        final List<String> args = new ArrayList<>(Arrays.asList("logcat", "-v", "time"));
 
         // for some reason, adding -b main excludes log output from AndroidRuntime runtime exceptions,
         // whereas just leaving it blank keeps them in.  So do not specify the buffer if it is "main"

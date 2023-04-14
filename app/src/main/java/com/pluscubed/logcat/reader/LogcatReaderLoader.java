@@ -32,7 +32,7 @@ public class LogcatReaderLoader implements Parcelable {
     private LogcatReaderLoader(Parcel in) {
         this.recordingMode = in.readInt() == 1;
         this.multiple = in.readInt() == 1;
-        Bundle bundle = in.readBundle(getClass().getClassLoader());
+        final Bundle bundle = in.readBundle(getClass().getClassLoader());
         for (String key : bundle.keySet()) {
             lastLines.put(key, bundle.getString(key));
         }
@@ -43,13 +43,13 @@ public class LogcatReaderLoader implements Parcelable {
         this.multiple = buffers.size() > 1;
         for (String buffer : buffers) {
             // no need to grab the last line if this isn't recording mode
-            String lastLine = recordingMode ? LogcatHelper.getLastLogLine(buffer) : null;
+            final String lastLine = recordingMode ? LogcatHelper.getLastLogLine(buffer) : null;
             lastLines.put(buffer, lastLine);
         }
     }
 
     public static LogcatReaderLoader create(Context context, boolean recordingMode) {
-        List<String> buffers = PreferenceHelper.getBuffers(context);
+        final List<String> buffers = PreferenceHelper.getBuffers(context);
         return new LogcatReaderLoader(buffers, recordingMode);
     }
 
@@ -57,8 +57,8 @@ public class LogcatReaderLoader implements Parcelable {
         LogcatReader reader;
         if (!multiple) {
             // single reader
-            String buffer = lastLines.keySet().iterator().next();
-            String lastLine = lastLines.values().iterator().next();
+            final String buffer = lastLines.keySet().iterator().next();
+            final String lastLine = lastLines.values().iterator().next();
             reader = new SingleLogcatReader(recordingMode, buffer, lastLine);
         } else {
             // multiple reader

@@ -51,7 +51,7 @@ public class SaveLogHelper {
         PrintStream out = null;
         try {
 
-            File tempFile = new File(getTempDirectory(), filename);
+            final File tempFile = new File(getTempDirectory(), filename);
 
             // specifying BUFFER gets rid of an annoying warning message
             out = new PrintStream(new BufferedOutputStream(new FileOutputStream(tempFile, false), BUFFER));

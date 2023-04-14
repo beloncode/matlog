@@ -38,7 +38,7 @@ public class LogLineViewHolder extends RecyclerView.ViewHolder implements PopupM
 
     @Override
     public boolean onLongClick(View v) {
-        PopupMenu menu = new PopupMenu(v.getContext(), v);
+        final PopupMenu menu = new PopupMenu(v.getContext(), v);
         menu.getMenu().add(0, CONTEXT_MENU_FILTER_ID, 0, R.string.filter_choice);
         menu.getMenu().add(0, CONTEXT_MENU_COPY_ID, 0, R.string.copy_to_clipboard);
         menu.setOnMenuItemClickListener(LogLineViewHolder.this);

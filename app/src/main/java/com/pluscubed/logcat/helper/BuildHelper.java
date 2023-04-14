@@ -23,7 +23,7 @@ public class BuildHelper {
             "CODENAME", "INCREMENTAL", "RELEASE", "SDK_INT");
 
     public static String getBuildInformationAsString() {
-        SortedMap<String, String> keysToValues = new TreeMap<>();
+        final SortedMap<String, String> keysToValues = new TreeMap<>();
 
         for (String buildField : BUILD_FIELDS) {
             putKeyValue(Build.class, buildField, keysToValues);
@@ -41,9 +41,9 @@ public class BuildHelper {
 
     private static void putKeyValue(Class<?> clazz, String buildField, SortedMap<String, String> keysToValues) {
         try {
-            Field field = clazz.getField(buildField);
-            Object value = field.get(null);
-            String key = clazz.getSimpleName().toLowerCase() + "." + buildField.toLowerCase();
+            final Field field = clazz.getField(buildField);
+            final Object value = field.get(null);
+            final String key = clazz.getSimpleName().toLowerCase() + "." + buildField.toLowerCase();
             keysToValues.put(key, String.valueOf(value));
         } catch (SecurityException | NoSuchFieldException | IllegalAccessException e) {
             // ignore

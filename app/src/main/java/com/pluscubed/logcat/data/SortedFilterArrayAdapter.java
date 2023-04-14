@@ -30,7 +30,6 @@ import com.pluscubed.logcat.util.UtilLogger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -426,7 +425,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
             if (prefix == null || prefix.length() == 0) {
                 synchronized (mLock) {
                     ArrayList<T> list = new ArrayList<>(mOriginalValues);
-                    Collections.sort(list, stringComparator);
+                    list.sort(stringComparator);
                     results.values = list;
                     results.count = list.size();
                 }
@@ -448,7 +447,7 @@ public class SortedFilterArrayAdapter<T> extends BaseAdapter implements Filterab
                     }
                 }
 
-                Collections.sort(newValues, stringComparator);
+                newValues.sort(stringComparator);
 
                 results.values = newValues;
                 results.count = newValues.size();

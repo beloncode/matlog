@@ -25,8 +25,8 @@ public class SearchCriteria {
 
         // check for the "pid" keyword
 
-        StringBuilder query = new StringBuilder(StringUtil.nullToEmpty(inputQuery));
-        Matcher pidMatcher = PID_PATTERN.matcher(query);
+        final StringBuilder query = new StringBuilder(StringUtil.nullToEmpty(inputQuery));
+        final Matcher pidMatcher = PID_PATTERN.matcher(query);
         if (pidMatcher.find()) {
             try {
                 pid = Integer.parseInt(Objects.requireNonNull(pidMatcher.group(1)));
